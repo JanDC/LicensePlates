@@ -1,15 +1,14 @@
 import json, shlex, subprocess
 
+
 class PlateReader:
-
-
     def __init__(self):
-        #webcam subprocess args
-        webcam_command = "fswebcam -r 640x480 -S 20 --no-banner --quiet alpr.jpg"
+        # webcam subprocess args
+        webcam_command = "fswebcam -r 640x480 -S 20 --no-banner --quiet ./templates/alpr.jpg"
         self.webcam_command_args = shlex.split(webcam_command)
 
         #alpr subprocess args
-        alpr_command = "alpr -c eu -n 300 -j ./belgianplates/belg1-CD1-950vip.jpg"
+        alpr_command = "alpr -c eu -n 300 -j ./templates/alpr.jpg"
         self.alpr_command_args = shlex.split(alpr_command)
 
 
@@ -40,20 +39,21 @@ class PlateReader:
         alpr_json, alpr_error = self.alpr_json_results()
 
         if not alpr_error is None:
-            print alpr_error
-            return
+            return alpr_error
 
         if alpr_json is None:
-            print "No results!"
-            return
+            return "No results!"
 
         results = alpr_json["results"]
 
         ordinal = 0
+        response = []
         for result in results:
             candidates = result["candidates"]
 
             for candidate in candidates:
                 if candidate["matches_template"] == 1:
                     ordinal += 1
-                    print "Guess {0:d}: {1:s} {2:.2f}%".format(ordinal, candidate["plate"], candidate["confidence"])
+                    response[ordinal] = "Guess {0:d}: {1:s} {2:.2f}%".format(ordinal, candidate["plate"],
+                                                                             candidate["confidence"])
+            return response

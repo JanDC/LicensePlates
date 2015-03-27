@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head lang="en">
     <meta charset="UTF-8">
     <title>LicensesPlatesess</title>
 </head>
 <body>
-<h1>LicensesPlatesess</h1>
+<h1>LicensesPlates</h1>
 
 <div>
-    <h2>Error</h2>
-    {{ error }}
-</div>
-<div>
-    <h2>Json</h2>
-    {{ json }}
-</div>
-<div>
-    <h2>Plate</h2>
-    {% for result in results %}
-        {{ result.plate }}
-    {% endfor %}
+    <h2>Check for plate</h2>
+
+    <p id="plate"></p>
+    <img id="shot" src="./alpr.jpg">
+    <a id="checkLink" href="#">NOW!</a>
 </div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    $('#checkLink').click(function (event) {
+        var triggered = event.timeStamp;
+        $.get(('check'), function (data) {
+            $('#plate').html(data);
+            $('#shot').attr('src', 'alpr.jpeg?t=' + triggered)
+        });
+    });
+
+</script>
 </html>

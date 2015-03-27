@@ -5,9 +5,15 @@ import json as libjson
 
 
 def home(request):
-    plate_reader = PlateReader()
-    alpr_json, alpr_error = plate_reader.alpr_json_results()
     template = loader.get_template('home.html')
-    results = alpr_json.get('results')
-    context = RequestContext(request, {'json': alpr_json, 'error': alpr_error, 'results': results})
+    context = RequestContext(request)
+    return HttpResponse(template._render(context))
+
+
+def capturePlate(request):
+    plate_reader = PlateReader()
+    response, errors = plate_reader.alpr_json_results()
+    results = response.get('results')
+    template = loader.get_template('check.html')
+    context = RequestContext(request, {'plate': results[0].get('plate'), 'confidence': results[0].get('confidence')})
     return HttpResponse(template._render(context))
